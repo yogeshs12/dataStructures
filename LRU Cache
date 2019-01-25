@@ -1,0 +1,151 @@
+
+import java.util.Scanner;
+import java.util.*;
+public class LRU_Cache
+{
+	public static void main(String args[])
+	{
+		Scanner sc = new Scanner(System.in);
+		int t = sc.nextInt();
+		while(t>0)
+		{
+			Set<Integer> s = new HashSet<Integer>() ;
+				int n = sc.nextInt();
+				LRUCache g = new LRUCache(n);
+			int q = sc.nextInt();
+			
+			while(q>0)
+			{
+			
+				String c = sc.next();
+			//	System.out.println(c);
+				if(c.equals("GET"))
+				{
+					int x = sc.nextInt();
+					System.out.print(g.get(x)+" ");
+				}
+				if(c.equals("SET"))
+				{
+					int x = sc.nextInt();
+					int y  = sc.nextInt();
+					g.set(x,y);
+				}
+			
+			q--;
+			//System.out.println();
+			}
+		t--;
+		System.out.println();
+		}
+	}
+}
+
+
+/*Please note that it's Function problem i.e.
+you need to write your solution in the form of Function(s) only.
+Driver Code to call/invoke your function is mentioned above.*/
+
+/*You are required to complete below class */
+class LRUCache {
+    Map<Integer,Node>map;
+    Node head,tail;
+     int count;
+    int capacity;
+    
+ 
+    /*Inititalize an LRU cache with size N */
+    public LRUCache(int N) {
+       //Your code here
+       this.capacity = N;
+       this.map = new HashMap<Integer,Node>();
+       this.head = null;
+       this.tail = null;
+       //this.count 
+    }
+    
+    /*Returns the value of the key x if 
+     present else returns -1 */
+    public int get(int x) {
+       //Your code here
+       
+       if(map.containsKey(x)){
+           
+           Node valueNode =  map.get(x);
+           deleteNode(valueNode);
+           addToHead(valueNode);
+           return valueNode.value;
+       }else{
+           return -1;
+       }
+    }
+    
+    public void deleteNode(Node node){
+        Node prevNode = node.prev;
+        if(prevNode != null)
+            prevNode.next = node.next;
+        if(node.next != null)
+            node.next.prev = prevNode;
+        node.next = null;
+        
+    }
+    
+    public void addToHead(Node node){
+    	
+       node.prev = head;
+       if(head != null)
+    	   head.next = node;
+       node.next=null;
+      
+       head = node;
+       tail = head;
+       while(tail.prev !=null){
+    	   tail = tail.prev;
+       }
+       //map.put(node.key,node);
+       
+    }
+    
+    /*Sets the key x with value y in the LRU cache */
+    public void set(int x, int y) {
+       //Your code here
+    	
+       Node node = new Node(x,y);
+       if(!map.containsKey(x)){
+            
+           if(count < capacity){
+                addToHead(node);
+                count++;
+           }else if(tail !=null){
+               Node temp = tail.next;
+               map.remove(tail.key);
+               deleteNode(tail);
+               tail = temp;
+              addToHead(node);
+           }
+           map.put(x,node);
+       }else{
+    	   Node prevNode = map.get(x);
+    	   map.put(x,node);
+    	   deleteNode(prevNode);
+    	   addToHead(node);
+       }
+    	   
+    	   
+       //}
+       
+        
+      
+    }
+}
+
+class Node{
+    int key;
+    int value;
+    Node prev,next;
+    public Node(int key, int value){
+        this.key = key;
+        this.value = value;
+        this.prev = null;
+        this.next = null;
+    }
+}
